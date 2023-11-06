@@ -14,6 +14,8 @@ namespace AspNetCoreIdentity.Models
 
         [Required(ErrorMessage = "Parola Kısmı Boş Bırakılamaz")]
         public string Password { get; set; }
+        public bool rememberMe { get; set; }
+        public string ReturnURl { get; set; }
 
     }
 }

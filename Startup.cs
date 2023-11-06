@@ -30,6 +30,14 @@ namespace AspNetCoreIdentity
                 opt.Password.RequireNonAlphanumeric = false;
             }
             ).AddEntityFrameworkStores<MyContext>();
+            services.ConfigureApplicationCookie(opt => {
+                opt.Cookie.HttpOnly = true;
+                opt.Cookie.SameSite = SameSiteMode.Strict;
+                opt.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+                opt.Cookie.Name = "MyCookie";
+                opt.ExpireTimeSpan = TimeSpan.FromDays(25);
+                opt.LoginPath = new PathString("/Home/SignIn");
+            });
             services.AddDbContext<MyContext>(opt =>
             {
                 opt.UseSqlServer("Server=LAPTOP-5VAB06RE\\SQLEXPRESS; database=IdentityDb;integrated security=true");
@@ -52,6 +60,8 @@ namespace AspNetCoreIdentity
 
             });
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
