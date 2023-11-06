@@ -1,0 +1,34 @@
+﻿@model UserCreateModel
+@{
+    Layout = "_Layout";
+}
+<form asp-action="Create" asp-controller="Home" method="post" class="p-4 w-75 mx-auto shadow">
+    <div class="mb-3">
+        <label>Kullanıcı Adı:</label>
+        <span asp-validation-for="UserName" class="text-danger"></span>
+        <input type="text" asp-for="UserName" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label>Email:</label>
+        <span asp-validation-for="Email" class="text-danger"></span>
+        <input type="email" asp-for="Email" class="form-control"/>
+    </div>
+    <div class="mb-3">
+        <label>Şifre:</label>
+        <span asp-validation-for="Password" class="text-danger"></span>
+        <input type="password" asp-for="Password" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label>Şifre Tekrarı:</label>
+        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+        <input type="password" asp-for="ConfirmPassword" class="form-control"/>
+    </div>
+    <div class="mb-3">
+        <label>Cinsiyet:</label>
+        <span asp-validation-for="Gender" class="text-danger"></span>
+        <input type="text" asp-for="Gender" class="form-control"/>
+    </div>
+    <div class="mb-3">
+        <button type="submit" class="btn btn-primary">Kayıt Ol</button>
+    </div>
+</form>
