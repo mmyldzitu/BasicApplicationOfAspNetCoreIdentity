@@ -24,7 +24,10 @@ namespace AspNetCoreIdentity.Controllers
             _signInManager = signInManager;
             _roleManager = roleManager;
         }
-
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
         public IActionResult Index()
         {
             return View();
@@ -60,7 +63,7 @@ namespace AspNetCoreIdentity.Controllers
                         });
                     }
                     
-                    await _userManager.AddToRoleAsync(user, "Member");
+                    await _userManager.AddToRoleAsync(user, "Admin");
                     return RedirectToAction("Index");
 
                 }
@@ -81,15 +84,16 @@ namespace AspNetCoreIdentity.Controllers
         {
             if (ModelState.IsValid)
             {
-               var signInResult= await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.rememberMe, false);
+                var user = await _userManager.FindByNameAsync(model.UserName);
+
+                var signInResult = await _signInManager.PasswordSignInAsync(model.UserName, model.Password,false, true);
                 if (signInResult.Succeeded)
                 {
                     if (!string.IsNullOrWhiteSpace(model.ReturnURl))
                     {
                         return Redirect(model.ReturnURl);
                     }
-                    var user =await _userManager.FindByNameAsync(model.UserName);
-                    var roles =await _userManager.GetRolesAsync(user);
+                    var roles = await _userManager.GetRolesAsync(user);
                     //bu iş başarılı
                     if (roles.Contains("Admin"))
                     {
@@ -97,10 +101,32 @@ namespace AspNetCoreIdentity.Controllers
                     }
                     return RedirectToAction("Panel");
                 }
+
+                else if (signInResult.IsLockedOut)
+                {
+                    var lockOutEnd= await _userManager.GetLockoutEndDateAsync(user);
+                    ModelState.AddModelError("", $"Hesabınız {(lockOutEnd.Value.UtcDateTime-DateTime.UtcNow).Minutes} dk Süre İle Askıya Alınmıştır");
+                }
                 else
                 {
-                    ModelState.AddModelError(" ", "Kullanıcı Adı veya Şifre Hatalı");
+                    var message = string.Empty;
+                    if (user != null)
+                    {
+                        
+
+                        var failedCount = await _userManager.GetAccessFailedCountAsync(user);
+                        message = $"{_userManager.Options.Lockout.MaxFailedAccessAttempts - failedCount} kez daha yanlış girerseniz hesabınız geçici olarak kitlenecek";
+                    }
+                    else
+                    {
+                        message = "Kullanıcı adı veya Şifre hatalı";
+                    }
+
+                    ModelState.AddModelError("", message);
+
                 }
+               
+                
 
             }
             

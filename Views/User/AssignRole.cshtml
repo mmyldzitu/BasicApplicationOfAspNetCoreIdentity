@@ -1,0 +1,31 @@
+﻿@model RolAssignSendModel
+@{
+    Layout = "_Layout";
+}
+<form asp-action="AssignRole" asp-controller="User" method="post" class="p-4 w-75 mx-auto shadow">
+
+    <input  type="hidden" asp-for="@Model.userID"/>
+    <div class="list-group">
+        @for (int i = 0; i < Model.Roles.Count; i++)
+        {
+            <input type="hidden" asp-for="@Model.Roles[i].name" />
+            <input type="hidden" asp-for="@Model.Roles[i].roleID" />
+            <label class="list-group-item">
+                <input class="form-check-input me-1" asp-for="@Model.Roles[i].exist">
+                @Model.Roles[i].name
+            </label>
+        }
+
+
+    </div>
+
+
+
+
+
+
+    <div class="mb-3">
+        <button type="submit" class="btn btn-primary">Kaydet</button>
+    </div>
+    <div class=" text-danger mt-2" asp-validation-summary="ModelOnly"></div>
+</form>

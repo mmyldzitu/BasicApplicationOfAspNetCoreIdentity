@@ -1,4 +1,5 @@
 using AspNetCoreIdentity.Context;
+using AspNetCoreIdentity.CustomDescriber;
 using AspNetCoreIdentity.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -28,15 +29,21 @@ namespace AspNetCoreIdentity
                 opt.Password.RequireLowercase = false;
                 opt.Password.RequireUppercase = false;
                 opt.Password.RequireNonAlphanumeric = false;
+                opt.Lockout.MaxFailedAccessAttempts = 3;
+                
+                
             }
-            ).AddEntityFrameworkStores<MyContext>();
+            ).AddErrorDescriber<CustomErrorDescriber>().AddEntityFrameworkStores<MyContext>();
             services.ConfigureApplicationCookie(opt => {
                 opt.Cookie.HttpOnly = true;
                 opt.Cookie.SameSite = SameSiteMode.Strict;
                 opt.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
                 opt.Cookie.Name = "MyCookie";
                 opt.ExpireTimeSpan = TimeSpan.FromDays(25);
+                
                 opt.LoginPath = new PathString("/Home/SignIn");
+                opt.AccessDeniedPath = new PathString("/home/AccessDenied");
+                
             });
             services.AddDbContext<MyContext>(opt =>
             {
@@ -52,6 +59,7 @@ namespace AspNetCoreIdentity
             {
                 app.UseDeveloperExceptionPage();
             }
+            
             app.UseStaticFiles();
             app.UseStaticFiles(new StaticFileOptions
             {

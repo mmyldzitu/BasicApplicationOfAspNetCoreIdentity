@@ -1,0 +1,31 @@
+﻿@model List<AppUser>
+@{
+    Layout = "_Layout";
+}
+<table class="table table-hovered table-bordered table-sm">
+    <thead>
+        <tr>
+            <th>Kullanıcı Adı</th>
+            <th>Cinsiyet</th>
+            <th>Email</th>
+            <th>Rol Bilgisi</th>
+            <th>Rol Güncelleme</th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.UserName</td>
+                <td>@item.Gender</td>
+                <td>@item.Email</td>
+                <td><getUserInfo user-id="@item.Id"></getUserInfo></td>
+                <td><a asp-action="AssignRole" asp-route-id="@item.Id" asp-controller="User" class="btn btn-outline-primary">Rol Güncelle</a></td>
+
+            </tr>
+        }
+
+    </tbody>
+</table>
+<a asp-action="Create" asp-controller="User" class="btn btn-outline-primary">Yeni Kullanıcı Ekle</a>
